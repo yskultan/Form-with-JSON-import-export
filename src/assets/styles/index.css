@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#app {
+    font-family: Montserrat;
+}
+
+.title {
+    color: #dd6b20;
+    font-weight: 600;
+    font-size: 24px;
+    display: block;
+}
+
+.subtitle {
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 16px;
+    display: block;
+}
+
+.part {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .2), 0 0 15px rgba(0, 0, 0, .1);
+    transition: .2s ease-in-out;
+    border-radius: 30px;
+}
+
+.part:hover {
+    box-shadow: 0 6px 25px rgba(0, 0, 0, .3), 0 0 17px rgba(0, 0, 0, .15);
+}
+
+.field {
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .15), 0 0 7px rgba(0, 0, 0, .15);
+    border-radius: 20px;
+    border: 2px rgb(252, 252, 252) solid;
+}
+
+.field:focus {
+    outline: none;
+    border: 2px rgb(231, 121, 47) solid;
+}
+
+.btn-sm {
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .15), 0 0 10px rgba(0, 0, 0, .15); 
+    border-radius: 25px;
+    color: white;
+    font-weight: 500;
+    font-size: 13px;
+    width: 150px;
+    height: 45px;
+}
+
+.btn-sm:hover,
+.btn-md:hover {
+    opacity: 0.8;
+}
+
+.btn-sm:focus,
+.btn-md:focus {
+    outline: none;
+}
+
+.btn-md {
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .15), 0 0 10px rgba(0, 0, 0, .15); 
+    border-radius: 25px;
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+    width: 170px;
+    height: 50px;
+}
