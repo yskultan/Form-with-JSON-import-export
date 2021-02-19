@@ -4,11 +4,12 @@
 
 #app {
     font-family: Montserrat;
+    -webkit-appearance:none;
 }
 
 .title {
     color: #dd6b20;
-    font-weight: 600;
+    font-weight: 900;
     font-size: 24px;
     display: block;
 }
@@ -24,6 +25,7 @@
     box-shadow: 0 6px 20px rgba(0, 0, 0, .2), 0 0 15px rgba(0, 0, 0, .1);
     transition: .2s ease-in-out;
     border-radius: 30px;
+    background-color: white;
 }
 
 .part:hover {
@@ -34,6 +36,7 @@
     box-shadow: 0 1px 5px rgba(0, 0, 0, .15), 0 0 7px rgba(0, 0, 0, .15);
     border-radius: 20px;
     border: 2px rgb(252, 252, 252) solid;
+    align-self: center;
 }
 
 .field:focus {
@@ -41,27 +44,47 @@
     border: 2px rgb(231, 121, 47) solid;
 }
 
+.logo {
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .15), 0 0 7px rgba(0, 0, 0, .15);
+}
+
+.icon {
+    transform: rotate(45deg);
+}
+
 .btn-sm {
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .15), 0 0 10px rgba(0, 0, 0, .15); 
+    border-radius: 25px;
+    color: white;
+    width: fit-content;
+    height: 46px;
+    align-self: center;
+}
+
+.btn-md {
     box-shadow: 0 1px 5px rgba(0, 0, 0, .15), 0 0 10px rgba(0, 0, 0, .15); 
     border-radius: 25px;
     color: white;
     font-weight: 500;
     font-size: 13px;
-    width: 150px;
+    width: fit-content;
     height: 45px;
+    align-self: center;
 }
 
 .btn-sm:hover,
-.btn-md:hover {
+.btn-md:hover,
+.btn-lg:hover {
     opacity: 0.8;
 }
 
 .btn-sm:focus,
-.btn-md:focus {
+.btn-md:focus,
+.btn-lg:focus {
     outline: none;
 }
 
-.btn-md {
+.btn-lg {
     box-shadow: 0 1px 5px rgba(0, 0, 0, .15), 0 0 10px rgba(0, 0, 0, .15); 
     border-radius: 25px;
     color: white;
@@ -69,4 +92,8 @@
     font-size: 15px;
     width: 170px;
     height: 50px;
+}
+
+input:checked + svg {
+    display: block
 }
