@@ -1,16 +1,46 @@
 <template>
   <div class="bg-white w-full sm:px-0 md:px-16 lg:px-48 sm:py-0 md:py-4 lg:py-8">
     <div class="h-full mx-auto sm:p-2 md:p-4 lg:p-16">
+
+    <!-- home block -->
+
       <div class="part p-6 w-full mb-8">
         <span class="title mb-8">Main</span>
-        <label class="subtitle mb-2">
+        <div class="w-full flex">
+          <label class="subtitle w-1/12">
+              Photo
+          </label>
+          <label class="subtitle w-11/12 ml-20">
               Institute name
-        </label>
-        <input id="name" 
-              v-model="institute.home.name"
-              type="text"
-              class="field px-4 py-2 w-full" 
-              placeholder="Institute of Space and Information Technologies"/>
+          </label>
+        </div>
+        <div class="flex w-full mt-2 h-36">
+            <div class="rounded-lg mr-2 w-1/12 h-24 logo">
+              <img :src="institute.home.bg" onerror="this.src='https://www.aphroditebeach.gr/wp-content/uploads/2019/01/white.png'" 
+                 class="object-cover rounded-lg h-24" />
+            </div>
+            <input type="file" ref="bg" class="hidden" @change="loadImg(institute.home.bg, 0,  $event)">
+            <button v-show="!loadedB"
+                    @click="openBg" 
+                    class="btn-sm bg-gray-600 py-10 px-4 mr-2">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+            </button>
+            <button v-show="loadedB"
+                    @click="unloadImg(institute.home, 0)"
+                    class="btn-sm bg-red-500 py-10 px-4 mr-2">
+              <svg class="icon w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+            </button>
+        <div class="ml-4 w-11/12">
+          <input v-model="institute.home.name"
+                type="text"
+                class="field px-4 py-2 w-full" 
+                placeholder="Full"/>
+          <input v-model="institute.home.shortname"
+                type="text"
+                class="field px-4 py-2 mt-2 w-full" 
+                placeholder="Short"/>
+        </div>
+        </div>
         <label class="subtitle mt-8 mb-2">
               Social links
         </label>
@@ -39,6 +69,9 @@
                 Delete item
         </button>
       </div>
+
+    <!-- about block -->
+
       <div class="part p-6 w-full mb-8">
         <span class="title mb-8">About</span>
         <label class="subtitle mb-2">
@@ -49,6 +82,9 @@
           Word count should be between 100 and 120
         </span>
       </div>
+
+    <!-- numbers block -->
+
       <div class="part p-6 w-full mb-8">
         <span class="title mb-8">Our numbers</span>
         <label class="subtitle mb-2">
@@ -64,6 +100,9 @@
                    type="text" 
                    placeholder="Text" />
         </div>
+        <span class="text-gray-600 pt-1 block">
+          Minimum three numbers
+        </span>
         <button v-show="institute.numbers.length < 6" 
                 @click="addField(institute.numbers)" 
                 class="btn-md bg-gray-600 py-1 px-8 mr-2 mt-3">
@@ -75,6 +114,9 @@
                 Delete item
         </button>
       </div>
+
+    <!-- education block -->
+
       <div class="part p-6 w-full mb-8">
         <span class="title mb-8">Education</span>
         <label class="subtitle mb-2">Levels of education</label>
@@ -114,16 +156,10 @@
               class="mt-4"
             >
             <label class="font-semibold text-gray-600 block mt-2 pb-1">{{ index + 1 }}</label>
-            <div class="flex w-full">
               <input v-model="item.title"  
                       type="text" 
                       placeholder="Title" 
-                      class="field px-4 py-2 mr-2 w-2/3"/>
-              <input v-model="item.code"  
-                      type="text" 
-                      placeholder="Code" 
-                      class="field px-4 py-2 w-1/3"/>
-            </div>
+                      class="field px-4 py-2 mr-2 w-full"/>
             <textarea v-model="item.description"
                       class="field px-4 py-2 mt-2 w-full h-40" 
                       placeholder="Description" />
@@ -137,6 +173,12 @@
                       placeholder="Years" 
                       class="field px-4 py-2 w-1/3"/>
             </div>
+            <textarea v-model="item.skills"
+                      class="field px-4 py-2 mt-2 w-full h-40" 
+                      placeholder="Skills" />
+            <span class="text-gray-600 pt-1 block">
+              Semicolon separated
+            </span>
           </div>
           <button @click="addField(institute.education.programs[category])" 
                   class="btn-md bg-gray-600 py-1 px-8 mt-3">
@@ -149,6 +191,9 @@
           </button>
         </div>
       </div>
+
+    <!-- advantages block -->
+
       <div class="part p-6 w-full mb-8">
         <span class="title mb-8">Why you should join us</span>
         <label class="subtitle mb-2">
@@ -164,6 +209,9 @@
                       placeholder="Description" 
                       class="field px-4 py-2 mt-2 w-full h-40" />
         </div>
+        <span class="text-gray-600 pt-1 block">
+          First letters should compose a word or a pattern
+        </span>
         <button v-show="institute.advantages.length < 6" 
                 @click="addField(institute.advantages)" 
                 class="btn-md bg-gray-600 py-1 px-8 mr-2 mt-3">
@@ -175,6 +223,9 @@
                 Delete item
         </button>
       </div>
+
+    <!-- welcome lock -->
+
       <div class="part p-6 w-full mb-8">
         <span class="title mb-8">Welcome</span>
         <label class="subtitle mb-2">
@@ -201,6 +252,9 @@
                 Delete item
         </button>
       </div>
+
+    <!-- internship block -->
+
       <div class="part p-6 w-full mb-8">
         <span class="title mb-8">Internship</span>
         <label class="subtitle mb-2">
@@ -210,14 +264,14 @@
             <img :src="company.logo" onerror="this.src='https://www.aphroditebeach.gr/wp-content/uploads/2019/01/white.png'" 
                  class="rounded-full mr-2 w-12 h-12 logo" />
             <input type="file" ref="image" class="hidden" @change="loadImg(institute.internship, index, $event)">
-            <button v-show="loadedI[index] === '0'" 
+            <button v-show="!loadedI[index]" 
                     @click="openImg(index)" 
-                    class="btn-sm bg-gray-600 py-2 px-4 mr-2">
+                    class="btn-sm bg-gray-600 py-4 px-4 mr-2">
               <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
             </button>
-            <button v-show="loadedI[index] === '1'" 
+            <button v-show="loadedI[index]" 
                     @click="unloadImg(institute.internship, index)"
-                    class="btn-sm bg-red-500 py-2 px-4 mr-2">
+                    class="btn-sm bg-red-500 py-4 px-4 mr-2">
               <svg class="icon w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
             </button>
             <input v-model="company.name"
@@ -236,6 +290,9 @@
                 Delete item
         </button>
       </div>
+
+    <!-- reviews block -->
+
       <div class="part p-6 w-full mb-8">
         <span class="title mb-8">Reviews</span>
         <label class="subtitle mb-2">
@@ -247,12 +304,12 @@
                  class="object-cover rounded-lg h-40" />
             </div>
             <input type="file" ref="photo" class="hidden" @change="loadImg(institute.reviews, index, $event)">
-            <button v-show="loadedR[index] === '0'" 
+            <button v-show="!loadedR[index]" 
                     @click="openPhoto(index)" 
                     class="btn-sm bg-gray-600 py-20 px-4 mr-2">
               <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
             </button>
-            <button v-show="loadedR[index] === '1'" 
+            <button v-show="loadedR[index]" 
                     @click="unloadImg(institute.reviews, index)"
                     class="btn-sm bg-red-500 py-20 px-4 mr-2">
               <svg class="icon w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
@@ -262,6 +319,9 @@
                       type="text" 
                       placeholder="Review" />
         </div>
+        <span class="text-gray-600 pt-1 block">
+          Review word count should be between 50 and 70
+        </span>
         <button v-show="institute.reviews.length < 5" 
                 @click="addField(institute.reviews)" 
                 class="btn-md bg-gray-600 py-1 px-8 mr-2 mt-3">
@@ -273,6 +333,9 @@
                 Delete item
         </button>
       </div>
+
+    <!-- buttons block -->
+    
       <div class="flex w-full justify-between">
         <div class="flex">
         <button @click="exportZip" 
@@ -306,6 +369,8 @@ export default {
       institute: {
         home: {
           name: "",
+          shortname: "",
+          bg: "",
           social: [{ platform:"instagram", link: "" }],
         },
         about: "",
@@ -313,18 +378,19 @@ export default {
         education: {
           categories: ["bachelor"],
           programs: {
-            bachelor: [{ title: "", code: "", description: "", years: "", tuition: "" }],
-            specialist: [{ title: "", code: "", description: "", years: "", tuition: "" }],
-            master: [{ title: "", code: "", description: "", years: "", tuition: "" }]
+            bachelor: [{ title: "", skills: "", description: "", years: "", tuition: "" }],
+            specialist: [{ title: "", skills: "", description: "", years: "", tuition: "" }],
+            master: [{ title: "", skills: "", description: "", years: "", tuition: "" }]
           }
         },
         advantages: [{ title: "", content: "" }],
         welcome: [{ quantity: "", nationality: "" }],
         internship: [{ name: "", logo: ""}],
-        reviews: [{ photo: "", review: ""}]
+        reviews: [{ name:"", role:"", photo: "", review: ""}]
       },
-      loadedI: ["0"],
-      loadedR: ["0"],
+      loadedI: [ false ],
+      loadedR: [ false ],
+      loadedB: false,
       companies: [],
       reviews: [],
       defaultData: {}
@@ -340,12 +406,12 @@ export default {
         return
       } 
       if (fieldType === this.institute.internship) {
-        this.loadedI.push("0");
+        this.loadedI.push(false);
         fieldType.push({ logo: ""});
         return
       }
       if (fieldType === this.institute.reviews) {
-        this.loadedR.push("0");
+        this.loadedR.push(false);
         fieldType.push({ photo: ""});
         return
       }
@@ -370,22 +436,30 @@ export default {
       const img = event.target.files[0]
       if (item === this.institute.internship) {
         this.institute.internship[index].logo = URL.createObjectURL(img);
-        this.loadedI[index] = "1" 
+        this.loadedI[index] = true
+      }
+      if (item === this.institute.reviews) {
+        this.institute.reviews[index].photo = URL.createObjectURL(img);
+        this.loadedR[index] = true
       }
       else {
-        this.institute.reviews[index].photo = URL.createObjectURL(img);
-        this.loadedR[index] = "1"  
-        console.log(this.institute)
+        this.institute.home.bg = URL.createObjectURL(img);
+        this.loadedB = true
       }
     },
     unloadImg(item, index) {
       if (item === this.institute.internship) {
         this.institute.internship[index].logo = ""
-        this.loadedI[index] = "0"
-      } else {
-        this.institute.reviews[index].photo = ""
-        this.loadedR[index] = "0"
+        this.loadedI[index] = false
       } 
+      if (item === this.institute.reviews) {
+        this.institute.reviews[index].photo = ""
+        this.loadedR[index] = false
+      } 
+      else {
+        this.institute.home.bg = ""
+        this.loadedB = false
+      }
     },
     loadJSON(event) {
       const file = event.target.files[0]
@@ -398,6 +472,7 @@ export default {
     resetLoaded() {
       this.loadedI.splice(0,this.loadedI.length)
       this.loadedR.splice(0,this.loadedR.length)
+      this.loadedB = false
     },
     resetImages() {
       this.companies.splice(0,this.companies.length)
@@ -406,8 +481,8 @@ export default {
     },
     resetAll() {
       this.resetLoaded()
-      this.loadedI.push("0")
-      this.loadedR.push("0")
+      this.loadedI.push(false)
+      this.loadedR.push(false)
       this.resetImages()
     },
     openImg(index){
@@ -416,25 +491,30 @@ export default {
     openPhoto(index){
       this.$refs.photo[index].click()
     },
+    openBg(){
+      this.$refs.bg.click()
+    },
     openFile(){
       this.$refs.file.click();
     },
     exportZip() {
       const imgList = []
-      console.log(this.institute)
       const expInstitute = JSON.parse(JSON.stringify(this.institute));
       for(let i = 0; i < expInstitute.internship.length; i++) {
-        let filename = "company" + i + ".png"
+        let filename = expInstitute.home.shortname + "-company" + i + ".png"
         imgList.push({name: filename, img: expInstitute.internship[i].logo })
         expInstitute.internship[i].logo = filename
       }
       for(let i = 0; i < expInstitute.reviews.length; i++) {
-        let filename = "review" + i + ".png"
+        let filename = expInstitute.home.shortname + "-review" + i + ".png"
         imgList.push({name: filename, img: expInstitute.reviews[i].photo })
         expInstitute.reviews[i].photo = filename
       }
+      let filename = expInstitute.home.shortname + "-bg" + ".png"
+      imgList.push({name: filename, img: expInstitute.home.bg })
+      expInstitute.home.bg = filename
       const zip = new JSZip()
-      zip.file("data.json", JSON.stringify(expInstitute, null, 2));
+      zip.file(expInstitute.home.shortname + ".json", JSON.stringify(expInstitute, null, 2));
       imgList.forEach(item => {
         var url = new Promise((resolve, reject) => {
           JSZipUtils.getBinaryContent(item.img, function (err, data) {
@@ -448,9 +528,9 @@ export default {
         zip.file(item.name, url, {binary:true})
       })
       zip.generateAsync({type:"blob"})
-        .then(function(content) {
-            saveAs(content, "archive.zip");
-        });
+      .then(function(content) {
+        saveAs(content, expInstitute.home.shortname + ".zip");
+      });
     },
     importZip(event) {
       const file = event.target.files[0]
@@ -465,26 +545,23 @@ export default {
                 var newInstitute = JSON.parse(res)
                 for (var i = 0; i < this.companies.length; i++) {
                   newInstitute.internship[i].logo = this.companies[i].logo
-                  this.loadedI.push("1")
+                  this.loadedI.push(true)
                 }
                 for (var k = 0; k < this.reviews.length; k++) {
                   newInstitute.reviews[k].photo = this.reviews[k].photo
-                  this.loadedR.push("1")
+                  this.loadedR.push(true)
                 }
                 this.resetImages()
                 this.institute = newInstitute
-                      console.log(this.institute)
               })
             }
             if (/\.(png)$/.test(zip.files[key].name)) {  
+              let base = zip.file(zip.files[key].name)
+              let blob = new Blob([base._data.compressedContent], {type: "image/png"})
               if (/^company/.test(zip.files[key].name)) {
-                let base = zip.file(zip.files[key].name)
-                let blob = new Blob([base._data.compressedContent], {type: "image/png"})
                 this.companies.push({ logo: URL.createObjectURL(blob)});
               }
               if (/^review/.test(zip.files[key].name)) {
-                let base = zip.file(zip.files[key].name)
-                let blob = new Blob([base._data.compressedContent], {type: "image/png"})
                 this.reviews.push({ photo: URL.createObjectURL(blob)});
               }
             }
