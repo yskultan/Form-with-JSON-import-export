@@ -298,9 +298,20 @@
         <label class="subtitle mb-2">
           Photo
         </label>
-        <div v-for="(review, index) in institute.reviews" :key="`reviews-${index}`" class="flex w-full mt-2">
+        <div v-for="(review, index) in institute.reviews" :key="`reviews-${index}`" class="w-full mt-2">
+            <div class="flex w-full">
+              <input v-model="reviews.name"  
+                      type="text" 
+                      placeholder="Name" 
+                      class="field px-4 py-2 mr-2 w-2/3"/>
+              <input v-model="reviews.role"  
+                      type="text" 
+                      placeholder="Role" 
+                      class="field px-4 py-2 w-1/3"/>
+            </div>
+            <div class="flex w-full mt-4">
             <div class="rounded-lg mr-2 w-32 logo">
-              <img :src="review.photo" onerror="this.src='https://www.aphroditebeach.gr/wp-content/uploads/2019/01/white.png'" 
+              <img :src="reviews.photo" onerror="this.src='https://www.aphroditebeach.gr/wp-content/uploads/2019/01/white.png'" 
                  class="object-cover rounded-lg h-40" />
             </div>
             <input type="file" ref="photo" class="hidden" @change="loadImg(institute.reviews, index, $event)">
@@ -314,10 +325,11 @@
                     class="btn-sm bg-red-500 py-20 px-4 mr-2">
               <svg class="icon w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
             </button>
-            <textarea v-model="review.text"
+            <textarea v-model="reviews.text"
                       class="field px-4 py-2 w-full h-40" 
                       type="text" 
                       placeholder="Review" />
+            </div>
         </div>
         <span class="text-gray-600 pt-1 block">
           Review word count should be between 50 and 70
@@ -491,6 +503,9 @@ export default {
     openPhoto(index){
       this.$refs.photo[index].click()
     },
+    openPdf(index){
+      this.$refs.pdf[index].click()
+    },
     openBg(){
       this.$refs.bg.click()
     },
@@ -510,7 +525,7 @@ export default {
         imgList.push({name: filename, img: expInstitute.reviews[i].photo })
         expInstitute.reviews[i].photo = filename
       }
-      let filename = expInstitute.home.shortname + "-bg" + ".png"
+      let filename = "bg-home.png"
       imgList.push({name: filename, img: expInstitute.home.bg })
       expInstitute.home.bg = filename
       const zip = new JSZip()
