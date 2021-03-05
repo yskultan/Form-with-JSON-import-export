@@ -179,13 +179,30 @@
             <span class="text-gray-600 pt-1 block">
               Semicolon separated
             </span>
+            <div class="flex w-full mt-2">
+              <input v-model="item.file"
+                      type="text" 
+                      placeholder="File" 
+                      class="field px-4 py-2 w-4/5"/>
+              <input type="file" :ref="category" class="hidden" @change="loadPdf(category, index, $event)">
+              <button v-show="!loadedF[category][index].loaded" 
+                      @click="openPdf(category, index)" 
+                      class="btn-md bg-gray-600 py-4 px-32 ml-2">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+              </button>
+              <button v-show="loadedF[category][index].loaded" 
+                      @click="unloadPdf(category, index)" 
+                      class="btn-md bg-red-500 py-4 px-32 ml-2">
+                <svg class="w-4 h-4 fill-current icon" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+              </button>
+            </div>
           </div>
-          <button @click="addField(institute.education.programs[category])" 
+          <button @click="addField(category)" 
                   class="btn-md bg-gray-600 py-1 px-8 mt-3">
             Another item
           </button>
           <button v-show="institute.education.programs[category].length > 1" 
-                  @click="removeField(institute.education.programs[category].length--, institute.education.programs[category])" 
+                  @click="removeField(institute.education.programs[category].length--, category)" 
                   class="btn-md bg-red-500 py-1 px-8 ml-2 mt-3">
             Delete item
           </button>
@@ -390,9 +407,9 @@ export default {
         education: {
           categories: ["bachelor"],
           programs: {
-            bachelor: [{ title: "", skills: "", description: "", years: "", tuition: "" }],
-            specialist: [{ title: "", skills: "", description: "", years: "", tuition: "" }],
-            master: [{ title: "", skills: "", description: "", years: "", tuition: "" }]
+            bachelor: [{ title: "", skills: "", description: "", years: "", tuition: "", file: "" }],
+            specialist: [{ title: "", skills: "", description: "", years: "", tuition: "", file: "" }],
+            master: [{ title: "", skills: "", description: "", years: "", tuition: "", file: "" }]
           }
         },
         advantages: [{ title: "", content: "" }],
@@ -403,6 +420,7 @@ export default {
       loadedI: [ false ],
       loadedR: [ false ],
       loadedB: false,
+      loadedF: { bachelor: [{ loaded: false, data: "" }], specialist: [{ loaded: false, data: "" }], master: [{ loaded: false, data: "" }]},
       companies: [],
       reviews: [],
       defaultData: {}
@@ -412,37 +430,46 @@ export default {
     this.defaultData = this.institute
   },
   methods: {
-    addField(fieldType) {
-      if (fieldType === this.institute.home.social) {
-        fieldType.push({ platform: "instagram"})
+    addField(item) {
+      if (item === this.institute.home.social) {
+        item.push({ platform: "instagram"})
         return
       } 
-      if (fieldType === this.institute.internship) {
+      if (item === this.institute.internship) {
         this.loadedI.push(false);
-        fieldType.push({ logo: ""});
+        item.push({ logo: ""});
         return
       }
-      if (fieldType === this.institute.reviews) {
+      if (item === this.institute.reviews) {
         this.loadedR.push(false);
-        fieldType.push({ photo: ""});
+        item.push({ photo: ""});
+        return
+      }
+      if (this.institute.education.categories.includes(item)) {
+        this.institute.education.programs[item].push({});
+        this.loadedF[item].push({ loaded: false, data: "" });
         return
       }
       else {
-        fieldType.push({});
+        item.push({});
         return
       }
     },
-    removeField(index, fieldType) {
-      if (fieldType === this.institute.internship) {
+    removeField(index, item) {
+      if (item === this.institute.internship) {
         this.loadedI.pop();
-        fieldType.splice(index, 1);
+        item.splice(index, 1);
       }
-      if (fieldType === this.institute.reviews) {
+      if (item === this.institute.reviews) {
         this.loadedR.pop();
-        fieldType.splice(index, 1);
+        item.splice(index, 1);
+      }
+      if (this.institute.education.categories.includes(item)) {
+        this.institute.education.programs[item].splice(index, 1);
+        this.loadedF[item].splice(index, 1);
       }
       else
-        fieldType.splice(index, 1);
+        item.splice(index, 1);
     },
     loadImg(item, index, event) {
       const img = event.target.files[0]
@@ -458,6 +485,17 @@ export default {
         this.institute.home.bg = URL.createObjectURL(img);
         this.loadedB = true
       }
+      this.$refs.img[index].value = ""
+    },
+    loadPdf(category, index, event) {
+      const pd = event.target.files
+      console.log(pd)
+      const pdf = event.target.files[0]
+      this.institute.education.programs[category][index].file = pdf.name
+      this.loadedF[category][index].loaded = true
+      this.loadedF[category][index].data = URL.createObjectURL(pdf)
+      console.log(this.loadedF[category][index].data)
+      this.$refs[category][index].value = ""
     },
     unloadImg(item, index) {
       if (item === this.institute.internship) {
@@ -472,6 +510,11 @@ export default {
         this.institute.home.bg = ""
         this.loadedB = false
       }
+    },
+    unloadPdf(category, index) {
+      this.institute.education.programs[category][index].file = ""
+      this.loadedF[category][index].loaded = false
+      this.loadedF[category][index].data = ""
     },
     loadJSON(event) {
       const file = event.target.files[0]
@@ -503,8 +546,13 @@ export default {
     openPhoto(index){
       this.$refs.photo[index].click()
     },
-    openPdf(index){
-      this.$refs.pdf[index].click()
+    openPdf(category, index) {
+      if (category === "bachelor")
+        this.$refs.bachelor[index].click()
+      if (category === "specialist")
+        this.$refs.specialist[index].click()
+      if (category === "master")
+        this.$refs.master[index].click()
     },
     openBg(){
       this.$refs.bg.click()
@@ -578,6 +626,19 @@ export default {
               }
               if (/^review/.test(zip.files[key].name)) {
                 this.reviews.push({ photo: URL.createObjectURL(blob)});
+              }
+            }
+            if (/\.(pdf)$/.test(zip.files[key].name)) {  
+              let base = zip.file(zip.files[key].name)
+              let blob = new Blob([base._data.compressedContent], {type: "application/pdf"})
+              if (/^bac/.test(zip.files[key].name)) {
+                this.loadedF.bachelor.push({ loaded: true, data: URL.createObjectURL(blob)});
+              }
+              if (/^spec/.test(zip.files[key].name)) {
+                this.loadedF.specialist.push({ loaded: true, data: URL.createObjectURL(blob)});
+              }
+              if (/^mas/.test(zip.files[key].name)) {
+                this.loadedF.master.push({ loaded: true, data: URL.createObjectURL(blob)});
               }
             }
           }
