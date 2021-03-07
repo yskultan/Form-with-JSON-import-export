@@ -60,6 +60,9 @@
                  placeholder="Link" 
                  class="field ml-2 px-4 py-2 w-2/3" />
         </div>
+        <span class="text-gray-600 pt-2 block">
+          Links should start with www.
+        </span>
         <button @click="addField(institute.home.social)" 
                 class="btn-md bg-gray-600 py-1 px-8 mt-3">
                 Another item
