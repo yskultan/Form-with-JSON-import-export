@@ -16,16 +16,16 @@
         </div>
         <div class="flex w-full mt-2 h-36">
             <div class="rounded-lg mr-2 w-1/12 h-24 logo">
-              <img :src="institute.home.bg" onerror="this.src='https://www.aphroditebeach.gr/wp-content/uploads/2019/01/white.png'" 
+              <img :src="bg.data" onerror="this.src='https://www.aphroditebeach.gr/wp-content/uploads/2019/01/white.png'" 
                  class="object-cover rounded-lg h-24" />
             </div>
             <input type="file" ref="bg" class="hidden" @change="loadImg(institute.home.bg, 0,  $event)">
-            <button v-show="!loadedB"
+            <button v-show="!bg.loaded"
                     @click="openBg" 
                     class="btn-sm bg-gray-600 py-10 px-4 mr-2">
               <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
             </button>
-            <button v-show="loadedB"
+            <button v-show="bg.loaded"
                     @click="unloadImg(institute.home, 0)"
                     class="btn-sm bg-red-500 py-10 px-4 mr-2">
               <svg class="icon w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
@@ -55,7 +55,8 @@
               <option value="facebook">Facebook</option>
           </select>
           <input v-model="item.link" 
-                 type="text" 
+                 type="url" 
+                 pattern="https://.*"
                  placeholder="Link" 
                  class="field ml-2 px-4 py-2 w-2/3" />
         </div>
@@ -185,12 +186,12 @@
                       placeholder="File" 
                       class="field px-4 py-2 w-4/5"/>
               <input type="file" :ref="category" class="hidden" @change="loadPdf(category, index, $event)">
-              <button v-show="!loadedF[category][index].loaded" 
+              <button v-show="!programs[category][index].loaded" 
                       @click="openPdf(category, index)" 
                       class="btn-md bg-gray-600 py-4 px-32 ml-2">
                 <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
               </button>
-              <button v-show="loadedF[category][index].loaded" 
+              <button v-show="programs[category][index].loaded" 
                       @click="unloadPdf(category, index)" 
                       class="btn-md bg-red-500 py-4 px-32 ml-2">
                 <svg class="w-4 h-4 fill-current icon" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
@@ -278,15 +279,15 @@
           Logo
         </label>
         <div v-for="(company, index) in institute.internship" :key="`companies-${index}`" class="flex w-full mt-2">
-            <img :src="company.logo" onerror="this.src='https://www.aphroditebeach.gr/wp-content/uploads/2019/01/white.png'" 
+            <img :src="companies[index].data" onerror="this.src='https://www.aphroditebeach.gr/wp-content/uploads/2019/01/white.png'" 
                  class="rounded-full mr-2 w-12 h-12 logo" />
             <input type="file" ref="image" class="hidden" @change="loadImg(institute.internship, index, $event)">
-            <button v-show="!loadedI[index]" 
+            <button v-show="!companies[index].loaded" 
                     @click="openImg(index)" 
                     class="btn-sm bg-gray-600 py-4 px-4 mr-2">
               <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
             </button>
-            <button v-show="loadedI[index]" 
+            <button v-show="companies[index].loaded" 
                     @click="unloadImg(institute.internship, index)"
                     class="btn-sm bg-red-500 py-4 px-4 mr-2">
               <svg class="icon w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
@@ -317,32 +318,32 @@
         </label>
         <div v-for="(review, index) in institute.reviews" :key="`reviews-${index}`" class="w-full mt-2">
             <div class="flex w-full">
-              <input v-model="reviews.name"  
+              <input v-model="review.name"  
                       type="text" 
                       placeholder="Name" 
                       class="field px-4 py-2 mr-2 w-2/3"/>
-              <input v-model="reviews.role"  
+              <input v-model="review.role"  
                       type="text" 
                       placeholder="Role" 
                       class="field px-4 py-2 w-1/3"/>
             </div>
             <div class="flex w-full mt-4">
             <div class="rounded-lg mr-2 w-32 logo">
-              <img :src="reviews.photo" onerror="this.src='https://www.aphroditebeach.gr/wp-content/uploads/2019/01/white.png'" 
+              <img :src="reviews[index].data" onerror="this.src='https://www.aphroditebeach.gr/wp-content/uploads/2019/01/white.png'" 
                  class="object-cover rounded-lg h-40" />
             </div>
             <input type="file" ref="photo" class="hidden" @change="loadImg(institute.reviews, index, $event)">
-            <button v-show="!loadedR[index]" 
+            <button v-show="!reviews[index].loaded" 
                     @click="openPhoto(index)" 
                     class="btn-sm bg-gray-600 py-20 px-4 mr-2">
               <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
             </button>
-            <button v-show="loadedR[index]" 
+            <button v-show="reviews[index].loaded" 
                     @click="unloadImg(institute.reviews, index)"
                     class="btn-sm bg-red-500 py-20 px-4 mr-2">
               <svg class="icon w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
             </button>
-            <textarea v-model="reviews.text"
+            <textarea v-model="review.text"
                       class="field px-4 py-2 w-full h-40" 
                       type="text" 
                       placeholder="Review" />
@@ -417,17 +418,15 @@ export default {
         internship: [{ name: "", logo: ""}],
         reviews: [{ name:"", role:"", photo: "", review: ""}]
       },
-      loadedI: [ false ],
-      loadedR: [ false ],
-      loadedB: false,
-      loadedF: { bachelor: [{ loaded: false, data: "" }], specialist: [{ loaded: false, data: "" }], master: [{ loaded: false, data: "" }]},
-      companies: [],
-      reviews: [],
+      programs: { bachelor: [{ loaded: false, name: "", data: "" }], specialist: [{ loaded: false, name: "", data: "" }], master: [{ loaded: false, name: "", data: "" }]},
+      companies: [{ loaded: false, name: "", data: "" }],
+      reviews: [{ loaded: false, name: "", data: "" }],
+      bg: { loaded: false, name: "", data: "" },
       defaultData: {}
     };
   },
   created() {
-    this.defaultData = this.institute
+    this.defaultData = JSON.parse(JSON.stringify(this.$data))
   },
   methods: {
     addField(item) {
@@ -436,18 +435,18 @@ export default {
         return
       } 
       if (item === this.institute.internship) {
-        this.loadedI.push(false);
+        this.companies.push({ loaded: false, name: "", data: "" });
         item.push({ logo: ""});
         return
       }
       if (item === this.institute.reviews) {
-        this.loadedR.push(false);
+        this.reviews.push({ loaded: false, name: "", data: "" });
         item.push({ photo: ""});
         return
       }
       if (this.institute.education.categories.includes(item)) {
         this.institute.education.programs[item].push({});
-        this.loadedF[item].push({ loaded: false, data: "" });
+        this.programs[item].push({ loaded: false, name: "", data: "" });
         return
       }
       else {
@@ -457,16 +456,16 @@ export default {
     },
     removeField(index, item) {
       if (item === this.institute.internship) {
-        this.loadedI.pop();
+        this.companies.splice(index, 1);
         item.splice(index, 1);
       }
       if (item === this.institute.reviews) {
-        this.loadedR.pop();
+        this.reviews.splice(index, 1);
         item.splice(index, 1);
       }
       if (this.institute.education.categories.includes(item)) {
         this.institute.education.programs[item].splice(index, 1);
-        this.loadedF[item].splice(index, 1);
+        this.programs[item].splice(index, 1);
       }
       else
         item.splice(index, 1);
@@ -474,71 +473,105 @@ export default {
     loadImg(item, index, event) {
       const img = event.target.files[0]
       if (item === this.institute.internship) {
-        this.institute.internship[index].logo = URL.createObjectURL(img);
-        this.loadedI[index] = true
+        let filename = "company-" + index + ".png"
+        this.institute.internship[index].logo = filename
+        this.companies[index] = {
+          loaded: true,
+          name: filename,
+          data: URL.createObjectURL(img)
+        }
+        this.$refs.image[index].value = ""
       }
       if (item === this.institute.reviews) {
-        this.institute.reviews[index].photo = URL.createObjectURL(img);
-        this.loadedR[index] = true
+        let filename = "review-" + index + ".png"
+        this.institute.reviews[index].photo = filename
+        this.reviews[index] = {
+          loaded: true,
+          name: filename,
+          data: URL.createObjectURL(img)
+        }
+        this.$refs.photo[index].value = ""
       }
       else {
-        this.institute.home.bg = URL.createObjectURL(img);
-        this.loadedB = true
+        this.institute.home.bg = "bg.png"
+        this.bg = {
+          loaded: true,
+          name: "bg.png",
+          data: URL.createObjectURL(img)
+        }
+        this.$refs.bg.value = ""
       }
-      this.$refs.img[index].value = ""
     },
     loadPdf(category, index, event) {
-      const pd = event.target.files
-      console.log(pd)
       const pdf = event.target.files[0]
-      this.institute.education.programs[category][index].file = pdf.name
-      this.loadedF[category][index].loaded = true
-      this.loadedF[category][index].data = URL.createObjectURL(pdf)
-      console.log(this.loadedF[category][index].data)
+      if (category === "bachelor") {
+        let filename = "bac-" + index + ".pdf"
+        this.institute.education.programs[category][index].file = filename
+        this.programs[category][index] = {
+          loaded: true,
+          name: filename,
+          data: URL.createObjectURL(pdf)
+        }
+      }
+      if (category === "specialist") {
+        let filename = "spec-" + index + ".pdf"
+        this.institute.education.programs[category][index].file = filename
+        this.programs[category][index] = {
+          loaded: true,
+          name: filename,
+          data: URL.createObjectURL(pdf)
+        }
+      }
+      if (category === "master") {
+        let filename = "mas-" + index + ".pdf"
+        this.institute.education.programs[category][index].file = filename
+        this.programs[category][index] = {
+          loaded: true,
+          name: filename,
+          data: URL.createObjectURL(pdf)
+        }
+      }
+      console.log("loaded", category, index)
       this.$refs[category][index].value = ""
     },
     unloadImg(item, index) {
       if (item === this.institute.internship) {
         this.institute.internship[index].logo = ""
-        this.loadedI[index] = false
+        this.companies[index].loaded = false
+        this.companies[index].data = ""
       } 
       if (item === this.institute.reviews) {
         this.institute.reviews[index].photo = ""
-        this.loadedR[index] = false
+        this.reviews[index].loaded = false
+        this.reviews[index].data = ""
       } 
       else {
         this.institute.home.bg = ""
-        this.loadedB = false
+        this.bg.loaded = false
+        this.bg.data = ""
       }
     },
     unloadPdf(category, index) {
       this.institute.education.programs[category][index].file = ""
-      this.loadedF[category][index].loaded = false
-      this.loadedF[category][index].data = ""
-    },
-    loadJSON(event) {
-      const file = event.target.files[0]
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        this.institute = JSON.parse(event.target.result);
-      }
-      reader.readAsText(file)
+      this.programs[category][index].loaded = false
+      this.programs[category][index].data = ""
     },
     resetLoaded() {
-      this.loadedI.splice(0,this.loadedI.length)
-      this.loadedR.splice(0,this.loadedR.length)
-      this.loadedB = false
-    },
-    resetImages() {
-      this.companies.splice(0,this.companies.length)
-      this.reviews.splice(0,this.reviews.length)
-      this.institute = this.defaultData
+      this.companies.pop()
+      this.reviews.pop()
+      this.programs.bachelor.pop()
+      this.programs.master.pop()
+      this.programs.specialist.pop()
     },
     resetAll() {
-      this.resetLoaded()
-      this.loadedI.push(false)
-      this.loadedR.push(false)
-      this.resetImages()
+      this.institute = this.defaultData.institute
+      this.programs = this.defaultData.programs
+      this.reviews = this.defaultData.reviews
+      this.companies = this.defaultData.companies
+      this.bg = this.defaultData.bg
+    },
+    openBg(){
+      this.$refs.bg.click()
     },
     openImg(index){
       this.$refs.image[index].click()
@@ -547,37 +580,34 @@ export default {
       this.$refs.photo[index].click()
     },
     openPdf(category, index) {
-      if (category === "bachelor")
-        this.$refs.bachelor[index].click()
-      if (category === "specialist")
-        this.$refs.specialist[index].click()
-      if (category === "master")
-        this.$refs.master[index].click()
-    },
-    openBg(){
-      this.$refs.bg.click()
+      this.$refs[category][index].click()
+      console.log("opened", category)
     },
     openFile(){
       this.$refs.file.click();
     },
     exportZip() {
       const imgList = []
-      const expInstitute = JSON.parse(JSON.stringify(this.institute));
-      for(let i = 0; i < expInstitute.internship.length; i++) {
-        let filename = expInstitute.home.shortname + "-company" + i + ".png"
-        imgList.push({name: filename, img: expInstitute.internship[i].logo })
-        expInstitute.internship[i].logo = filename
+      const expInstitute = JSON.parse(JSON.stringify(this.$data));
+      
+      imgList.push({name: expInstitute.bg.name, img: expInstitute.bg.data })
+      for(let i = 0; i < expInstitute.companies.length; i++) {
+        imgList.push({ name: expInstitute.companies[i].name, img: expInstitute.companies[i].data })
       }
       for(let i = 0; i < expInstitute.reviews.length; i++) {
-        let filename = expInstitute.home.shortname + "-review" + i + ".png"
-        imgList.push({name: filename, img: expInstitute.reviews[i].photo })
-        expInstitute.reviews[i].photo = filename
+        imgList.push({ name: expInstitute.reviews[i].name, img: expInstitute.reviews[i].data })
       }
-      let filename = "bg-home.png"
-      imgList.push({name: filename, img: expInstitute.home.bg })
-      expInstitute.home.bg = filename
+      for(let i = 0; i < expInstitute.programs.bachelor.length; i++) {
+        imgList.push({ name: expInstitute.programs.bachelor[i].name, img: expInstitute.programs.bachelor[i].data })
+      }
+      for(let i = 0; i < expInstitute.programs.specialist.length; i++) {
+        imgList.push({ name: expInstitute.programs.specialist[i].name, img: expInstitute.programs.specialist[i].data })
+      }
+      for(let i = 0; i < expInstitute.programs.master.length; i++) {
+        imgList.push({ name: expInstitute.programs.master[i].name, img: expInstitute.programs.master[i].data })
+      }
       const zip = new JSZip()
-      zip.file(expInstitute.home.shortname + ".json", JSON.stringify(expInstitute, null, 2));
+      zip.file(expInstitute.institute.home.shortname + ".json", JSON.stringify(expInstitute.institute, null, 2));
       imgList.forEach(item => {
         var url = new Promise((resolve, reject) => {
           JSZipUtils.getBinaryContent(item.img, function (err, data) {
@@ -592,53 +622,47 @@ export default {
       })
       zip.generateAsync({type:"blob"})
       .then(function(content) {
-        saveAs(content, expInstitute.home.shortname + ".zip");
+        saveAs(content, expInstitute.institute.home.shortname + ".zip");
       });
     },
     importZip(event) {
       const file = event.target.files[0]
       var jszip = new JSZip();
       jszip.loadAsync(file).then((zip) => {
+        this.resetAll() 
         this.resetLoaded() 
         for (let key in zip.files) { 
           if (!zip.files[key].dir) {
             if (/\.(json)$/.test(zip.files[key].name)) {
               let base = zip.file(zip.files[key].name).async('string')
               base.then(res => {
-                var newInstitute = JSON.parse(res)
-                for (var i = 0; i < this.companies.length; i++) {
-                  newInstitute.internship[i].logo = this.companies[i].logo
-                  this.loadedI.push(true)
-                }
-                for (var k = 0; k < this.reviews.length; k++) {
-                  newInstitute.reviews[k].photo = this.reviews[k].photo
-                  this.loadedR.push(true)
-                }
-                this.resetImages()
-                this.institute = newInstitute
+                this.institute = JSON.parse(res)
               })
             }
             if (/\.(png)$/.test(zip.files[key].name)) {  
               let base = zip.file(zip.files[key].name)
               let blob = new Blob([base._data.compressedContent], {type: "image/png"})
               if (/^company/.test(zip.files[key].name)) {
-                this.companies.push({ logo: URL.createObjectURL(blob)});
+                this.companies.push({  loaded: true, name: zip.files[key].name, data: URL.createObjectURL(blob) });
               }
               if (/^review/.test(zip.files[key].name)) {
-                this.reviews.push({ photo: URL.createObjectURL(blob)});
+                this.reviews.push({ loaded: true, name: zip.files[key].name, data: URL.createObjectURL(blob) });
+              }
+              if (/^bg/.test(zip.files[key].name)) {
+                this.bg = { loaded: true, name: zip.files[key].name, data: URL.createObjectURL(blob) };
               }
             }
             if (/\.(pdf)$/.test(zip.files[key].name)) {  
               let base = zip.file(zip.files[key].name)
               let blob = new Blob([base._data.compressedContent], {type: "application/pdf"})
               if (/^bac/.test(zip.files[key].name)) {
-                this.loadedF.bachelor.push({ loaded: true, data: URL.createObjectURL(blob)});
+                this.programs.bachelor.push({ loaded: true, name: zip.files[key].name, data: URL.createObjectURL(blob)});
               }
               if (/^spec/.test(zip.files[key].name)) {
-                this.loadedF.specialist.push({ loaded: true, data: URL.createObjectURL(blob)});
+                this.programs.specialist.push({ loaded: true, name: zip.files[key].name, data: URL.createObjectURL(blob)});
               }
               if (/^mas/.test(zip.files[key].name)) {
-                this.loadedF.master.push({ loaded: true, data: URL.createObjectURL(blob)});
+                this.programs.master.push({ loaded: true, name: zip.files[key].name, data: URL.createObjectURL(blob)});
               }
             }
           }
