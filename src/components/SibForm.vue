@@ -19,7 +19,7 @@
               <img :src="bg.data" onerror="this.src='https://www.aphroditebeach.gr/wp-content/uploads/2019/01/white.png'" 
                  class="object-cover rounded-lg h-24" />
             </div>
-            <input type="file" ref="bg" class="hidden" @change="loadImg(0, 0,  $event)">
+            <input type="file" ref="bg" class="hidden" @change="loadImg(0, 0, $event)">
             <button v-show="!bg.loaded"
                     @click="openBg" 
                     class="btn-sm bg-gray-600 py-10 px-4 mr-2">
@@ -157,7 +157,7 @@
               class="mt-4"
             >
             <label class="font-semibold text-gray-600 block mt-2 pb-1">{{ index + 1 }}</label>
-              <input v-model="item.title"  
+            <input v-model="item.title"  
                       type="text" 
                       placeholder="Title" 
                       class="field px-4 py-2 mr-2 w-full"/>
@@ -183,7 +183,8 @@
             <div class="flex w-full mt-2">
               <input v-model="item.file"
                       type="text" 
-                      placeholder="File" 
+                      placeholder="File"
+                      readonly
                       class="field px-4 py-2 w-4/5"/>
               <input type="file" :ref="category" class="hidden" @change="loadPdf(category, index, $event)">
               <button v-show="!programs[category][index].loaded" 
@@ -472,7 +473,17 @@ export default {
     },
     loadImg(item, index, event) {
       const img = event.target.files[0]
-      console.log(item)
+      if (item === 0) {
+        this.institute.home.bg = "bg.png"
+        this.bg = {
+          loaded: true,
+          name: "bg.png",
+          data: URL.createObjectURL(img)
+        }
+        this.$refs.bg.value = ""
+        this.$forceUpdate();
+        return
+      }
       if (item === 1) {
         let filename = "company-" + index + ".png"
         this.institute.internship[index].logo = filename
@@ -494,17 +505,6 @@ export default {
           data: URL.createObjectURL(img)
         }
         this.$refs.photo[index].value = ""
-        this.$forceUpdate();
-        return
-      }
-      if (item === 0) {
-        this.institute.home.bg = "bg.png"
-        this.bg = {
-          loaded: true,
-          name: "bg.png",
-          data: URL.createObjectURL(img)
-        }
-        this.$refs.bg.value = ""
         this.$forceUpdate();
         return
       }
@@ -599,7 +599,6 @@ export default {
     },
     openPdf(category, index) {
       this.$refs[category][index].click()
-      console.log("opened", category)
     },
     openFile(){
       this.$refs.file.click();
