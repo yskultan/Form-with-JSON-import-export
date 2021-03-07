@@ -19,7 +19,7 @@
               <img :src="bg.data" onerror="this.src='https://www.aphroditebeach.gr/wp-content/uploads/2019/01/white.png'" 
                  class="object-cover rounded-lg h-24" />
             </div>
-            <input type="file" ref="bg" class="hidden" @change="loadImg(institute.home.bg, 0,  $event)">
+            <input type="file" ref="bg" class="hidden" @change="loadImg(0, 0,  $event)">
             <button v-show="!bg.loaded"
                     @click="openBg" 
                     class="btn-sm bg-gray-600 py-10 px-4 mr-2">
@@ -279,9 +279,9 @@
           Logo
         </label>
         <div v-for="(company, index) in institute.internship" :key="`companies-${index}`" class="flex w-full mt-2">
-            <img :src="companies[index].data" onerror="this.src='https://www.aphroditebeach.gr/wp-content/uploads/2019/01/white.png'" 
+            <img :loaded="companies[index].loaded" :src="companies[index].data" onerror="this.src='https://www.aphroditebeach.gr/wp-content/uploads/2019/01/white.png'" 
                  class="rounded-full mr-2 w-12 h-12 logo" />
-            <input type="file" ref="image" class="hidden" @change="loadImg(institute.internship, index, $event)">
+            <input type="file" ref="image" class="hidden" @change="loadImg(1, index, $event)">
             <button v-show="!companies[index].loaded" 
                     @click="openImg(index)" 
                     class="btn-sm bg-gray-600 py-4 px-4 mr-2">
@@ -332,7 +332,7 @@
               <img :src="reviews[index].data" onerror="this.src='https://www.aphroditebeach.gr/wp-content/uploads/2019/01/white.png'" 
                  class="object-cover rounded-lg h-40" />
             </div>
-            <input type="file" ref="photo" class="hidden" @change="loadImg(institute.reviews, index, $event)">
+            <input type="file" ref="photo" class="hidden" @change="loadImg(2, index, $event)">
             <button v-show="!reviews[index].loaded" 
                     @click="openPhoto(index)" 
                     class="btn-sm bg-gray-600 py-20 px-4 mr-2">
@@ -431,21 +431,21 @@ export default {
   methods: {
     addField(item) {
       if (item === this.institute.home.social) {
-        item.push({ platform: "instagram"})
+        item.push({ platform: "instagram",  link: "" })
         return
       } 
       if (item === this.institute.internship) {
         this.companies.push({ loaded: false, name: "", data: "" });
-        item.push({ logo: ""});
+        item.push({ name: "", logo: ""});
         return
       }
       if (item === this.institute.reviews) {
         this.reviews.push({ loaded: false, name: "", data: "" });
-        item.push({ photo: ""});
+        item.push({ name:"", role:"", photo: "", review: ""});
         return
       }
       if (this.institute.education.categories.includes(item)) {
-        this.institute.education.programs[item].push({});
+        this.institute.education.programs[item].push({ title: "", skills: "", description: "", years: "", tuition: "", file: "" });
         this.programs[item].push({ loaded: false, name: "", data: "" });
         return
       }
@@ -472,7 +472,8 @@ export default {
     },
     loadImg(item, index, event) {
       const img = event.target.files[0]
-      if (item === this.institute.internship) {
+      console.log(item)
+      if (item === 1) {
         let filename = "company-" + index + ".png"
         this.institute.internship[index].logo = filename
         this.companies[index] = {
@@ -481,8 +482,10 @@ export default {
           data: URL.createObjectURL(img)
         }
         this.$refs.image[index].value = ""
+        this.$forceUpdate();
+        return
       }
-      if (item === this.institute.reviews) {
+      if (item === 2) {
         let filename = "review-" + index + ".png"
         this.institute.reviews[index].photo = filename
         this.reviews[index] = {
@@ -491,8 +494,10 @@ export default {
           data: URL.createObjectURL(img)
         }
         this.$refs.photo[index].value = ""
+        this.$forceUpdate();
+        return
       }
-      else {
+      if (item === 0) {
         this.institute.home.bg = "bg.png"
         this.bg = {
           loaded: true,
@@ -500,6 +505,8 @@ export default {
           data: URL.createObjectURL(img)
         }
         this.$refs.bg.value = ""
+        this.$forceUpdate();
+        return
       }
     },
     loadPdf(category, index, event) {
@@ -512,6 +519,9 @@ export default {
           name: filename,
           data: URL.createObjectURL(pdf)
         }
+        this.$refs[category][index].value = ""
+        this.$forceUpdate();
+        return
       }
       if (category === "specialist") {
         let filename = "spec-" + index + ".pdf"
@@ -521,6 +531,9 @@ export default {
           name: filename,
           data: URL.createObjectURL(pdf)
         }
+        this.$refs[category][index].value = ""
+        this.$forceUpdate();
+        return
       }
       if (category === "master") {
         let filename = "mas-" + index + ".pdf"
@@ -530,31 +543,36 @@ export default {
           name: filename,
           data: URL.createObjectURL(pdf)
         }
+        this.$refs[category][index].value = ""
+        this.$forceUpdate();
+        return
       }
-      console.log("loaded", category, index)
-      this.$refs[category][index].value = ""
     },
     unloadImg(item, index) {
       if (item === this.institute.internship) {
         this.institute.internship[index].logo = ""
         this.companies[index].loaded = false
         this.companies[index].data = ""
+        this.$forceUpdate();
       } 
       if (item === this.institute.reviews) {
         this.institute.reviews[index].photo = ""
         this.reviews[index].loaded = false
         this.reviews[index].data = ""
+        this.$forceUpdate();
       } 
       else {
         this.institute.home.bg = ""
         this.bg.loaded = false
         this.bg.data = ""
+        this.$forceUpdate();
       }
     },
     unloadPdf(category, index) {
       this.institute.education.programs[category][index].file = ""
       this.programs[category][index].loaded = false
       this.programs[category][index].data = ""
+      this.$forceUpdate();
     },
     resetLoaded() {
       this.companies.pop()
