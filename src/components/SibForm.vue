@@ -234,7 +234,7 @@
         <span class="text-gray-600 pt-1 block">
           First letters should compose a word or a pattern
         </span>
-        <button v-show="institute.advantages.length < 6" 
+        <button v-show="institute.advantages.length < 5" 
                 @click="addField(institute.advantages)" 
                 class="btn-md bg-gray-600 py-1 px-8 mr-2 mt-3">
                 Another item
