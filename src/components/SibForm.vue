@@ -662,26 +662,27 @@ export default {
             if (/\.(png)$/.test(zip.files[key].name)) {  
               let base = zip.file(zip.files[key].name)
               let blob = new Blob([base._data.compressedContent], {type: "image/png"})
-              if (/^company/.test(zip.files[key].name)) {
+              if (/company/.test(zip.files[key].name)) {
                 this.companies.push({  loaded: true, name: zip.files[key].name, data: URL.createObjectURL(blob) });
+                console.log(this.companies)
               }
-              if (/^review/.test(zip.files[key].name)) {
+              if (/review/.test(zip.files[key].name)) {
                 this.reviews.push({ loaded: true, name: zip.files[key].name, data: URL.createObjectURL(blob) });
               }
-              if (/^bg/.test(zip.files[key].name)) {
+              if (/bg/.test(zip.files[key].name)) {
                 this.bg = { loaded: true, name: zip.files[key].name, data: URL.createObjectURL(blob) };
               }
             }
             if (/\.(pdf)$/.test(zip.files[key].name)) {  
               let base = zip.file(zip.files[key].name)
               let blob = new Blob([base._data.compressedContent], {type: "application/pdf"})
-              if (/^bac/.test(zip.files[key].name)) {
+              if (/bac/.test(zip.files[key].name)) {
                 this.programs.bachelor.push({ loaded: true, name: zip.files[key].name, data: URL.createObjectURL(blob)});
               }
-              if (/^spec/.test(zip.files[key].name)) {
+              if (/spec/.test(zip.files[key].name)) {
                 this.programs.specialist.push({ loaded: true, name: zip.files[key].name, data: URL.createObjectURL(blob)});
               }
-              if (/^mas/.test(zip.files[key].name)) {
+              if (/mas/.test(zip.files[key].name)) {
                 this.programs.master.push({ loaded: true, name: zip.files[key].name, data: URL.createObjectURL(blob)});
               }
             }
