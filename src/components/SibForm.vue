@@ -35,10 +35,6 @@
                 type="text"
                 class="field px-4 py-2 w-full" 
                 placeholder="Full"/>
-          <input v-model="institute.home.shortname"
-                type="text"
-                class="field px-4 py-2 mt-2 w-full" 
-                placeholder="Short"/>
         </div>
         </div>
         <label class="subtitle mt-8 mb-2">
@@ -403,7 +399,6 @@ export default {
       institute: {
         home: {
           name: "",
-          shortname: "",
           bg: "",
           social: [{ platform:"instagram", link: "" }],
         },
@@ -420,7 +415,7 @@ export default {
         advantages: [{ title: "", content: "" }],
         welcome: [{ quantity: "", nationality: "" }],
         internship: [{ name: "", logo: ""}],
-        reviews: [{ name:"", role:"", photo: "", review: ""}]
+        reviews: [{ name:"", role:"", photo: "", text: ""}]
       },
       programs: { bachelor: [{ loaded: false, name: "", data: "" }], specialist: [{ loaded: false, name: "", data: "" }], master: [{ loaded: false, name: "", data: "" }]},
       companies: [{ loaded: false, name: "", data: "" }],
@@ -627,7 +622,7 @@ export default {
         imgList.push({ name: expInstitute.programs.master[i].name, img: expInstitute.programs.master[i].data })
       }
       const zip = new JSZip()
-      zip.file(expInstitute.institute.home.shortname + ".json", JSON.stringify(expInstitute.institute, null, 2));
+      zip.file(expInstitute.institute.home.name.replace(/\s+/g, '-').toLowerCase() + ".json", JSON.stringify(expInstitute.institute, null, 2));
       imgList.forEach(item => {
         var url = new Promise((resolve, reject) => {
           JSZipUtils.getBinaryContent(item.img, function (err, data) {
@@ -642,12 +637,12 @@ export default {
       })
       zip.generateAsync({type:"blob"})
       .then(function(content) {
-        saveAs(content, expInstitute.institute.home.shortname + ".zip");
+        saveAs(content, expInstitute.institute.home.name.replace(/\s+/g, '-').toLowerCase() + ".zip");
       });
     },
     importZip(event) {
       const file = event.target.files[0]
-      var jszip = new JSZip();
+      var jszip = new JSZip()
       jszip.loadAsync(file).then((zip) => {
         this.resetAll() 
         this.resetLoaded() 
